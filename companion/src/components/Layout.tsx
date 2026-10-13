@@ -19,7 +19,7 @@ export function Layout({ onLoadSchematic, onClearHistory, clearLoading }: Layout
       <header className="header">
         <div className="logo">
           <img
-            src="/circuitSmith-logo.svg"
+            src="/circuitSmith-logo.png"
             alt="CircuitSmith"
             className="logo-img"
           />

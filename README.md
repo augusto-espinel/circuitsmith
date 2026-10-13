@@ -1,7 +1,7 @@
 # CircuitSmith (powered by HephAIstus Core)
 
 <p align="center">
-  <img src="visuals/circuitSmith-logo.svg" alt="CircuitSmith Logo" width="460" />
+  <img src="visuals/circuitSmith-logo.png" alt="CircuitSmith Logo" width="460" />
 </p>
 
 CircuitSmith is an AI copilot for KiCad schematic design and circuit simulation, powered by the **HephAIstus** deterministic circuit and simulation engine.
