@@ -66,7 +66,7 @@ class HistoryStore:
     
     SCHEMA_VERSION = 1
     
-    def __init__(self, db_path: str = ".hephaistus/history.db"):
+    def __init__(self, db_path: str = ".circuitsmith/history.db"):
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()

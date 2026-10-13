@@ -1,15 +1,15 @@
-# HephAIstus Architecture
+# CircuitSmith & HephAIstus Architecture
 
-Version: 3.0
-Date: 2026-09-05
+Version: 3.1
+Date: 2026-10-14
 
 ## Overview
 
-HephAIstus is organized into four primary layers:
+**CircuitSmith** (the user-facing product and AI copilot) is powered by **HephAIstus** (the deterministic circuit & simulation engine). The system is organized into four primary layers:
 
-1. **Deterministic backend** — File parsing, patch validation, KiCad CLI, simulation
-2. **LLM orchestration** — Context assembly, prompt construction, patch extraction
-3. **Companion UI** — Chat, context inspector, patch preview, simulation history
+1. **Deterministic backend (HephAIstus Core)** — File parsing, patch validation, KiCad CLI, simulation (`hephaistus_*` packages & `hephaistus-*` CLIs)
+2. **LLM orchestration** — Context assembly, CircuitSmith persona & prompt construction, `hephaistus/patch-plan/v1` extraction
+3. **Companion UI (CircuitSmith)** — Chat, context inspector, patch preview, simulation history
 4. **Future KiCad adapter** — Optional IPC/plugin integration
 
 ```
@@ -85,10 +85,10 @@ KiCad schematic (modified)
 
 ### 1.5 Session Persistence
 
-**Location:** `<project>/.hephaistus/`
+**Location:** `<project>/.circuitsmith/` (with automatic fallback to legacy `.hephaistus/` if present)
 
 ```
-.hephaistus/
+.circuitsmith/
 ├── session.json      # Current session state
 ├── history.db        # Conversation history (SQLite/FTS5)
 └── simulations/

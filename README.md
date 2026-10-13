@@ -1,8 +1,17 @@
-# HephAIstus
+# CircuitSmith (powered by HephAIstus Core)
 
-HephAIstus is an AI copilot for KiCad schematic design and circuit simulation.
+<p align="center">
+  <img src="visuals/circuitSmith-logo.svg" alt="CircuitSmith Logo" width="460" />
+</p>
+
+CircuitSmith is an AI copilot for KiCad schematic design and circuit simulation, powered by the **HephAIstus** deterministic circuit and simulation engine.
 
 It sits beside KiCad, understands schematic and simulation context, answers engineering questions, and applies previewable, validated changes without requiring the user to copy files, screenshots, or console output into an external chat.
+
+### Naming & Architecture Boundary
+
+- **CircuitSmith** — User-facing product brand, companion UI, LLM copilot persona, and project session directory (`.circuitsmith/`).
+- **HephAIstus** — Protected internal engine codename (`hephaistus_*` Python packages, `hephaistus-*` CLI entrypoints, and `hephaistus/patch-plan/v1` protocol schema).
 
 ## What's New (2026-09-05)
 
@@ -52,8 +61,8 @@ It sits beside KiCad, understands schematic and simulation context, answers engi
 The target workflow is:
 
 1. Open a KiCad schematic or simulation window.
-2. Ask HephAIstus about the circuit, ERC report, simulation parameters, console output, or waveform results.
-3. Receive explanations or a deterministic patch plan.
+2. Ask CircuitSmith about the circuit, ERC report, simulation parameters, console output, or waveform results.
+3. Receive explanations or a deterministic patch plan (`hephaistus/patch-plan/v1`).
 4. Preview the proposed change.
 5. Apply it only after validation.
 6. Re-run ERC and/or simulation automatically.
@@ -71,7 +80,7 @@ The target workflow is:
 | SPICE property inheritance | Auto-copy `Sim.*` properties from libraries |
 | B-Source generation | Behavioral sources with correct `Sim.Device = "SPICE"` |
 | Simulation output parsing | Ngspice console, DC op, raw waveforms |
-| Session persistence | Project-scoped sessions in `.hephaistus/` |
+| Session persistence | Project-scoped sessions in `.circuitsmith/` |
 | LLM context assembly | Token-budgeted layered context |
 | Companion UI | React-based chat, context inspector, history |
 | Dialog management | Proper React state management for dialogs |
@@ -86,18 +95,40 @@ The target workflow is:
 - Simulation execution (beyond ingestion)
 - KiCad IPC integration (future)
 
-## Quick Start
+## Quick Start (Running CircuitSmith Locally)
+
+You need two terminals — one for the **HephAIstus backend API** (`port 8000`) and one for the **CircuitSmith Companion UI** (`port 3000`).
+
+### 1. Terminal 1 — Start the Backend API (`port 8000`)
 
 ```bash
-# Clone and setup
-pip install -e .
+cd ~/.openclaw/workspace/hephaistus
+source .venv/bin/activate
 
-# Run backend
-python -m hephaistus
+# First-time setup only (if needed):
+# pip install -e .
 
-# Run companion UI (separate terminal)
-cd companion && npm install && npm run dev
+# Start the API server (with hot-reload):
+hephaistus-api
+# Or directly: python backend/api/server.py
 ```
+> **LLM Providers:**
+> - **Ollama (local):** Ensure `ollama serve` is running.
+> - **OpenRouter (cloud):** Set `OPENROUTER_API_KEY=sk-or-...` in `.env` at the repo root or export it in your shell.
+
+### 2. Terminal 2 — Start the Companion Web UI (`port 3000`)
+
+```bash
+cd ~/.openclaw/workspace/hephaistus/companion
+# npm install   # First-time setup only
+npm run dev
+```
+
+### 3. Open in Browser
+- **CircuitSmith UI:** http://localhost:3000
+- **API Swagger Docs:** http://localhost:8000/docs
+
+Once open at `http://localhost:3000`, click **📁 Load** in the top header to load a `.kicad_sch` schematic. Session state, conversation history, and simulation runs are automatically saved in `<project>/.circuitsmith/`.
 
 ## Branch Information
 

@@ -23,7 +23,7 @@ class SimulationArchive:
     Manages FIFO archive of simulation runs.
     
     Directory structure:
-        <project>/.hephaistus/simulations/
+        <project>/.circuitsmith/simulations/
         ├── current/           # Active simulation
         │   ├── run_metadata.json
         │   ├── console.txt
@@ -45,7 +45,10 @@ class SimulationArchive:
             max_history: Maximum number of historical runs to keep
         """
         self.project_root = Path(project_root)
-        self.simulations_dir = self.project_root / ".hephaistus" / "simulations"
+        primary_dir = self.project_root / ".circuitsmith"
+        legacy_dir = self.project_root / ".hephaistus"
+        base_dir = legacy_dir if (not primary_dir.exists() and legacy_dir.exists()) else primary_dir
+        self.simulations_dir = base_dir / "simulations"
         self.current_dir = self.simulations_dir / "current"
         self.history_dir = self.simulations_dir / "history"
         self.max_history = max_history

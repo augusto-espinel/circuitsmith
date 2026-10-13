@@ -1,6 +1,6 @@
-# HephAIstus Companion UI
+# CircuitSmith Companion UI
 
-AI copilot companion for KiCad schematic design.
+AI copilot companion for KiCad schematic design (powered by HephAIstus Core).
 
 ## Development
 

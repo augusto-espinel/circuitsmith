@@ -18,8 +18,11 @@ export function Layout({ onLoadSchematic, onClearHistory, clearLoading }: Layout
     <div className="layout">
       <header className="header">
         <div className="logo">
-          <span className="logo-icon">🔧</span>
-          <span className="logo-text">HephAIstus</span>
+          <img
+            src="/circuitSmith-logo.svg"
+            alt="CircuitSmith"
+            className="logo-img"
+          />
         </div>
         
         {/* Session actions bar */}

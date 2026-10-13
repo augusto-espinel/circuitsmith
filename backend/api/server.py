@@ -1,8 +1,8 @@
 """
-HephAIstus Companion API Server.
+CircuitSmith Companion API Server (HephAIstus Core).
 
-FastAPI server that wires backend modules to HTTP endpoints
-for the React companion UI.
+FastAPI server that wires HephAIstus backend modules to HTTP endpoints
+for the CircuitSmith React companion UI.
 """
 
 import os
@@ -28,6 +28,7 @@ from hephaistus_context import (
     HistoryStore,
     SimulationStatus,
 )
+from hephaistus_context.session_state import ProjectPaths
 from hephaistus_circuit import parse_schematic
 from hephaistus_circuit.engine import validate_patch_plan, apply_patch_plan
 from hephaistus_circuit.spice_library import load_libraries_for_schematic
@@ -41,8 +42,8 @@ PROVIDERS_CONFIG_PATH = Path(__file__).parent.parent.parent / "config" / "llm-pr
 
 # Application
 app = FastAPI(
-    title="HephAIstus Companion API",
-    description="Backend API for the HephAIstus companion UI",
+    title="CircuitSmith Companion API",
+    description="Backend API for the CircuitSmith companion UI (powered by HephAIstus Core)",
     version="0.1.0",
 )
 
@@ -72,7 +73,7 @@ def _init_persistence(project_root: str) -> SessionPersistence:
     
     _project_root = Path(project_root)
     _session_persistence = SessionPersistence(project_root)
-    _history_store = HistoryStore(db_path=str(_project_root / ".hephaistus" / "history.db"))
+    _history_store = HistoryStore(db_path=str(ProjectPaths.history_path(project_root)))
     
     return _session_persistence
 
@@ -273,14 +274,15 @@ async def restore_session(project_path: Optional[str] = None):
         for search_dir in search_paths:
             if not search_dir.exists():
                 continue
-            for session_file in search_dir.rglob(".hephaistus/session.json"):
-                try:
-                    mtime = session_file.stat().st_mtime
-                    if mtime > recent_time:
-                        recent_time = mtime
-                        recent_session = session_file
-                except:
-                    continue
+            for dir_name in (ProjectPaths.DIR_NAME, ProjectPaths.LEGACY_DIR_NAME):
+                for session_file in search_dir.rglob(f"{dir_name}/session.json"):
+                    try:
+                        mtime = session_file.stat().st_mtime
+                        if mtime > recent_time:
+                            recent_time = mtime
+                            recent_session = session_file
+                    except:
+                        continue
         
         if recent_session:
             # Found a session file - initialize from its project
@@ -455,7 +457,7 @@ async def clear_history():
         
         # Clear cached last_prompt.json
         if _project_root:
-            debug_file = _project_root / '.hephaistus' / 'last_prompt.json'
+            debug_file = ProjectPaths.project_dir(str(_project_root)) / 'last_prompt.json'
             if debug_file.exists():
                 debug_file.unlink()
         
@@ -514,7 +516,7 @@ async def load_schematic(path: str):
     Load a schematic file.
     
     Parses the .kicad_sch file, discovers project root, and updates session state.
-    Session is persisted to .hephaistus/session.json in the project directory.
+    Session is persisted to .circuitsmith/session.json in the project directory.
     """
     schematic_path = Path(path)
     if not schematic_path.exists():
@@ -582,7 +584,7 @@ async def load_schematic(path: str):
             "relative_path": relative_path,
             "components": service.session.schematic.component_count,
             "nets": service.session.schematic.net_count,
-            "session_file": str(_project_root / ".hephaistus" / "session.json") if _project_root else None,
+            "session_file": str(ProjectPaths.session_path(str(_project_root))) if _project_root else None,
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse schematic: {str(e)}")
@@ -624,7 +626,7 @@ async def load_simulation(request: SimulationLoadRequest):
     Load simulation results into session context.
     
     Can either:
-    1. Auto-discover from .hephaistus/simulations/ (if path not provided)
+    1. Auto-discover from .circuitsmith/simulations/ (if path not provided)
     2. Load from specified path
     3. Accept manual results (op_points, signal_summaries)
     
@@ -1054,13 +1056,13 @@ async def get_last_prompt():
     """
     Get the last assembled prompt+context for debugging.
     
-    Returns the contents of .hephaistus/last_prompt.json from the current project.
+    Returns the contents of .circuitsmith/last_prompt.json from the current project.
     """
     global _project_root
     if not _project_root:
         raise HTTPException(status_code=404, detail="No project loaded")
     
-    debug_file = _project_root / '.hephaistus' / 'last_prompt.json'
+    debug_file = ProjectPaths.project_dir(str(_project_root)) / 'last_prompt.json'
     if not debug_file.exists():
         raise HTTPException(status_code=404, detail="No last prompt file found")
     

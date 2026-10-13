@@ -139,7 +139,7 @@ def main(argv: Optional[list] = None) -> int:
     
     # history
     history_cmd = subparsers.add_parser("history", help="Manage conversation history")
-    history_cmd.add_argument("--db", "-d", default=".hephaistus/history.db", help="Database path")
+    history_cmd.add_argument("--db", "-d", default=".circuitsmith/history.db", help="Database path")
     history_sub = history_cmd.add_subparsers(dest="history_cmd", required=True)
     
     # history search

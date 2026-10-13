@@ -1,7 +1,7 @@
 {
-  "name": "hephaistus-companion",
+  "name": "circuitsmith-companion",
   "version": "0.1.0",
-  "description": "HephAIstus Companion UI - AI copilot for KiCad schematic design",
+  "description": "CircuitSmith Companion UI - AI copilot for KiCad schematic design (powered by HephAIstus Core)",
   "type": "module",
   "scripts": {
     "dev": "vite",

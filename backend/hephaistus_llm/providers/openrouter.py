@@ -158,8 +158,8 @@ class OpenRouterProvider:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://hephaistus.dev",  # Optional, for rankings
-            "X-Title": "HephAIstus",  # Optional, for rankings
+            "HTTP-Referer": "https://github.com/augusto-espinel/circuitsmith",  # Optional, for rankings
+            "X-Title": "CircuitSmith",  # Optional, for rankings
         }
         
         try:

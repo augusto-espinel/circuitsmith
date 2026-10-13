@@ -26,7 +26,8 @@ class SessionPersistence:
     """
     Handles saving and loading session state to/from JSON.
     
-    Sessions are stored project-relative in <project>/.hephaistus/session.json.
+    Sessions are stored project-relative in <project>/.circuitsmith/session.json
+    (with automatic fallback to legacy .hephaistus/ if present).
     
     This enables:
     - Project portability (session travels with project)
@@ -49,13 +50,14 @@ class SessionPersistence:
         self.project_root = Path(project_root)
     
     def _ensure_project_dir(self) -> Path:
-        """Ensure .hephaistus directory exists and return its path."""
+        """Ensure .circuitsmith directory exists (or use legacy .hephaistus) and return its path."""
         if not self.project_root:
             raise ValueError("Project root not set. Call set_project() first.")
         
-        hephaistus_dir = self.project_root / ".hephaistus"
-        hephaistus_dir.mkdir(parents=True, exist_ok=True)
-        return hephaistus_dir
+        from .session_state import ProjectPaths
+        session_dir = ProjectPaths.project_dir(str(self.project_root))
+        session_dir.mkdir(parents=True, exist_ok=True)
+        return session_dir
     
     def session_file(self) -> Path:
         """Get the session.json path for current project."""

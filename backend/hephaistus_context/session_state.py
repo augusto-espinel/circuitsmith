@@ -86,31 +86,46 @@ class UserDirectives:
 
 @dataclass
 class ProjectPaths:
-    """Standard paths within a KiCad project for HephAIstus data."""
+    """Standard paths within a KiCad project for CircuitSmith/HephAIstus data."""
     
+    DIR_NAME: str = ".circuitsmith"
+    LEGACY_DIR_NAME: str = ".hephaistus"
     session_file: str = "session.json"
     history_db: str = "history.db"
     simulations_dir: str = "simulations"
     
     @classmethod
+    def project_dir(cls, project_root: str) -> Path:
+        """
+        Get the session directory (.circuitsmith) for a project.
+        Falls back to .hephaistus if it already exists and .circuitsmith does not.
+        """
+        root = Path(project_root)
+        primary = root / cls.DIR_NAME
+        legacy = root / cls.LEGACY_DIR_NAME
+        if not primary.exists() and legacy.exists():
+            return legacy
+        return primary
+
+    @classmethod
     def hephaistus_dir(cls, project_root: str) -> Path:
-        """Get the .hephaistus directory for a project."""
-        return Path(project_root) / ".hephaistus"
+        """Alias for project_dir() kept for internal compatibility."""
+        return cls.project_dir(project_root)
     
     @classmethod
     def session_path(cls, project_root: str) -> Path:
         """Get the session.json path for a project."""
-        return cls.hephaistus_dir(project_root) / cls.session_file
+        return cls.project_dir(project_root) / cls.session_file
     
     @classmethod
     def history_path(cls, project_root: str) -> Path:
         """Get the history.db path for a project."""
-        return cls.hephaistus_dir(project_root) / cls.history_db
+        return cls.project_dir(project_root) / cls.history_db
     
     @classmethod
     def simulations_path(cls, project_root: str) -> Path:
         """Get the simulations directory for a project."""
-        return cls.hephaistus_dir(project_root) / cls.simulations_dir
+        return cls.project_dir(project_root) / cls.simulations_dir
 
 
 @dataclass
@@ -232,7 +247,7 @@ class SessionState:
     Complete session state combining schematic, simulation, and user directives.
     
     This is the single source of truth for Layer 1 context.
-    Session data is stored project-relative in .hephaistus/session.json.
+    Session data is stored project-relative in .circuitsmith/session.json.
     """
     
     session_id: str = ""

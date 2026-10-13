@@ -20,8 +20,8 @@ from .providers.openrouter import OpenRouterProvider
 from .providers.ollama import OllamaProvider
 
 
-# Default system prompt for HephAIstus
-HEPHAISTUS_SYSTEM_PROMPT = """You are HephAIstus, an AI assistant specialized in KiCad schematic design and SPICE simulation.
+# Default system prompt for CircuitSmith (HephAIstus Core)
+HEPHAISTUS_SYSTEM_PROMPT = """You are CircuitSmith, an AI assistant specialized in KiCad schematic design and SPICE simulation (powered by the HephAIstus circuit engine).
 
 You help engineers design and optimize electronic circuits by proposing changes through a deterministic patch-plan system.
 
@@ -220,17 +220,18 @@ class LLMOrchestrator:
         """
         Save last prompt+context to file for debugging.
         
-        Written to <project>/.hephaistus/last_prompt.json, overwritten each call.
+        Written to <project>/.circuitsmith/last_prompt.json, overwritten each call.
         """
         import json
         from pathlib import Path
+        from hephaistus_context.session_state import ProjectPaths
         
         # Get project root from context service
         project_root = getattr(self.context_service.session, 'project_root', None)
         if not project_root:
             return  # No project loaded, skip
         
-        debug_file = Path(project_root) / '.hephaistus' / 'last_prompt.json'
+        debug_file = ProjectPaths.project_dir(project_root) / 'last_prompt.json'
         debug_file.parent.mkdir(parents=True, exist_ok=True)
         
         # Build debug payload

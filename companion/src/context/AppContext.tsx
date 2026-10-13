@@ -2,7 +2,8 @@ import { createContext, useContext, useState, useCallback, useEffect, ReactNode 
 import { useApi } from '@/hooks/useApi'
 import type { ContextAssemblyResult } from '@/services/context'
 
-const STORAGE_KEY_LLM = 'hephaistus_llm_selection'
+const STORAGE_KEY_LLM = 'circuitsmith_llm_selection'
+const LEGACY_STORAGE_KEY_LLM = 'hephaistus_llm_selection'
 
 interface LLMSelection {
   provider: string
@@ -60,9 +61,9 @@ const AppContext = createContext<AppState | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [llmSelection, setLLMSelectionState] = useState<LLMSelection>(() => {
-    // Load from localStorage on init
+    // Load from localStorage on init (with fallback to legacy key)
     try {
-      const stored = localStorage.getItem(STORAGE_KEY_LLM)
+      const stored = localStorage.getItem(STORAGE_KEY_LLM) || localStorage.getItem(LEGACY_STORAGE_KEY_LLM)
       if (stored) {
         return JSON.parse(stored)
       }

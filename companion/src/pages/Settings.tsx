@@ -136,7 +136,8 @@ export function Settings() {
       <section className="settings-section">
         <h3>About</h3>
         <p className="about-text">
-          HephAIstus is an AI-assisted KiCad schematic and simulation copilot.
+          CircuitSmith is an AI-assisted KiCad schematic and simulation copilot,
+          powered by the HephAIstus deterministic circuit engine.
           It helps you design and optimize circuits by proposing validated patch-plans.
         </p>
         <p className="about-text">

@@ -225,7 +225,7 @@ export function Chat({
   return (
     <div className="chat-page">
       <div className="page-header">
-        <h1>HephAIstus</h1>
+        <h1>CircuitSmith</h1>
         <p className="page-description">
           Describe what you want to change, and I'll propose a patch-plan.
         </p>
